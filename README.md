@@ -4,7 +4,7 @@ This README would normally document whatever steps are necessary to get your app
 
 ### What is this repository for? ###
 
-This repo. is about a small TCG - Tactica game project.
+This repo. is about a small TCG - Tactical game project.
 
 ### How do I get set up? ###
 
