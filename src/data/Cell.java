@@ -11,6 +11,7 @@ public class Cell
 	private int xpos, ypos;
 	
 	private Unit unit;
+	private boolean movable;
 	
 	public Cell(int x, int y)
 	{
@@ -22,6 +23,15 @@ public class Cell
 	
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) 
 	{
+		if(canMove())
+		{
+			g.setColor(Color.green);
+			g.fillRect(Board.offsetX + xpos * Cell.CELL_SIZE +2, 
+						Board.offsetY + ypos * Cell.CELL_SIZE +2, 
+						42, 
+						42);
+		}
+		
 		if(isOccupied())
 		{
 			g.setColor(Color.blue);
@@ -30,15 +40,6 @@ public class Cell
 					20, 
 					20);
 		}
-		else
-		{
-			g.setColor(Color.gray);
-			g.drawRect(Board.offsetX + xpos * Cell.CELL_SIZE +14, 
-					Board.offsetY + ypos * Cell.CELL_SIZE +14, 
-					20, 
-					20);
-		}
-		
 	}
 	
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) 
@@ -46,6 +47,23 @@ public class Cell
 
 	} 
 	
+	public boolean canMove()
+	{
+		return movable;
+	}
+	
+	public int getXpos() {
+		return xpos;
+	}
+
+	public int getYpos() {
+		return ypos;
+	}
+
+	public void setMovable(boolean movable) {
+		this.movable = movable;
+	}
+
 	public boolean isOccupied()
 	{
 		return unit == null ? false : true; 

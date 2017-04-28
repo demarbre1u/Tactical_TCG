@@ -6,7 +6,9 @@ public class Unit
 
 	public Unit()
 	{
-		
+		atk = 1;
+		def = 1;
+		mvt = 4;
 	}
 	
 	public int getAtk() {

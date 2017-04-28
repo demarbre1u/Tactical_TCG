@@ -20,9 +20,6 @@ public class Cursor
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) 
 	{
 		drawCursor(g);
-		
-		g.drawString(cursorX+"", 10, 50);
-		g.drawString(cursorY+"", 10, 75);
 	}
 	
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) 
@@ -32,6 +29,11 @@ public class Cursor
 	
 	private void drawCursor(Graphics g) 
 	{
+		g.drawString(cursorX+"", 10, 50);
+		g.drawString(cursorY+"", 10, 75);
+		
+		g.drawString("Cursor : " + isOnBoard(), 10, 100);
+		
 		if(cursorX < 0 || cursorX >= Board.WIDTH || cursorY < 0 || cursorY >= Board.HEIGHT)
 			return;
 		
@@ -51,5 +53,23 @@ public class Cursor
 		// On fait le test ou on vérifie si x/yPos est négatif afin d'éviter les problèmes d'arrondis lors des calculs de coord.
 		cursorX = xpos < 0 ? -1 : (int) xpos;
 		cursorY = ypos < 0 ? -1 : (int) ypos;
+	}
+	
+	public boolean isOnBoard()
+	{
+		if(cursorX >= 0 && cursorX < Board.WIDTH && cursorY >= 0 && cursorY < Board.HEIGHT)
+			return true;
+	
+		return false;
+	}
+
+	public int getCursorX() 
+	{
+		return cursorX;
+	}
+
+	public int getCursorY() 
+	{
+		return cursorY;
 	}
 }

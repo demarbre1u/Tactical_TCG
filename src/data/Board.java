@@ -3,15 +3,19 @@ package data;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.state.StateBasedGame;
 
 import main.Main;
+import scene.SceneBattle;
 
 public class Board 
 {	
 	private Cell[][] board;
 	public static float offsetX, offsetY;
 	public static int WIDTH, HEIGHT;
+	
+	public Cell currentCell;
 	
 	private Cursor cursor;
 
@@ -34,7 +38,12 @@ public class Board
 		
 		cursor = new Cursor();
 		
-		board[2][2].setUnit(new Unit());
+		board[5][5].setUnit(new Unit());
+		
+		board[4][5].setUnit(new Unit());
+		board[6][5].setUnit(new Unit());
+		board[5][4].setUnit(new Unit());
+		board[5][6].setUnit(new Unit());
 	}
 	
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) 
@@ -48,7 +57,105 @@ public class Board
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) 
 	{
 		cursor.update(gc, sbg, delta);
+		checkForInputs(gc);
 	} 
+
+	private void checkForInputs(GameContainer gc) 
+	{
+		Input i = gc.getInput();
+		
+		switch(SceneBattle.PHASE)
+		{
+			case SceneBattle.STANDBY:
+				if(i.isMousePressed(Input.MOUSE_LEFT_BUTTON) && cursor.isOnBoard())
+				{
+					if(board[cursor.getCursorX()][cursor.getCursorY()].isOccupied())
+					{
+						currentCell = board[cursor.getCursorX()][cursor.getCursorY()];
+						clearMovePossibilities();
+						setMovePossibilities(0, currentCell.getXpos(), currentCell.getYpos());
+						
+						SceneBattle.PHASE = SceneBattle.MOVING;
+					}
+				}
+				break;
+			case SceneBattle.MOVING:
+				if(i.isMousePressed(Input.MOUSE_LEFT_BUTTON) && cursor.isOnBoard())
+				{
+					if(board[cursor.getCursorX()][cursor.getCursorY()].canMove())
+					{
+						board[cursor.getCursorX()][cursor.getCursorY()].setUnit(currentCell.getUnit());
+						currentCell.removeUnit();
+						
+						clearMovePossibilities();
+						SceneBattle.PHASE = SceneBattle.STANDBY;
+					}
+				}
+				
+				if(i.isMousePressed(Input.MOUSE_RIGHT_BUTTON))
+				{
+					clearMovePossibilities();
+					currentCell = null;
+					SceneBattle.PHASE = SceneBattle.STANDBY;
+				}
+				break;
+		}
+	}
+	
+	private void clearMovePossibilities() 
+	{
+		for(int i = 0 ; i < WIDTH ; i++)
+		{
+			for(int j = 0 ; j < HEIGHT ; j++)
+			{
+				board[i][j].setMovable(false);
+			}
+		}
+	}
+
+	private void setMovePossibilities(int dist, int x, int y)
+	{
+		if(dist == currentCell.getUnit().getMvt())
+			return;
+		else
+		{
+			if(x - 1 >= 0)
+			{
+				if(! board[x - 1][y].isOccupied())
+				{
+					board[x - 1][y].setMovable(true);
+					setMovePossibilities(dist + 1, x - 1, y);
+				}
+			}
+			
+			if(x + 1 < WIDTH)
+			{
+				if(! board[x + 1][y].isOccupied())
+				{
+					board[x + 1][y].setMovable(true);
+					setMovePossibilities(dist + 1, x + 1, y);
+				}
+			}
+			
+			if(y - 1 >= 0)
+			{
+				if(! board[x][y - 1].isOccupied())
+				{
+					board[x][y - 1].setMovable(true);
+					setMovePossibilities(dist + 1, x, y - 1);
+				}
+			}
+			
+			if(y + 1 < HEIGHT)
+			{
+				if(! board[x][y + 1].isOccupied())
+				{
+					board[x][y + 1].setMovable(true);
+					setMovePossibilities(dist + 1, x, y + 1);
+				}
+			}
+		}
+	}
 
 	private void drawCells(GameContainer gc, StateBasedGame sbg, Graphics g) 
 	{
