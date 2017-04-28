@@ -6,6 +6,8 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.state.StateBasedGame;
 
+import scene.SceneBattle;
+
 public class Cursor 
 {
 
@@ -34,7 +36,7 @@ public class Cursor
 		
 		g.drawString("Cursor : " + isOnBoard(), 10, 100);
 		
-		if(cursorX < 0 || cursorX >= Board.WIDTH || cursorY < 0 || cursorY >= Board.HEIGHT)
+		if(cursorX < 0 || cursorX >= Board.WIDTH || cursorY < 0 || cursorY >= Board.HEIGHT || SceneBattle.PHASE == SceneBattle.UNIT_ACTION)
 			return;
 		
 		g.setColor(Color.red);

@@ -15,6 +15,8 @@ public class Board
 	public static float offsetX, offsetY;
 	public static int WIDTH, HEIGHT;
 	
+	private float sepDist = 20, buttonSize = 32;
+	
 	public Cell currentCell;
 	
 	private Cursor cursor;
@@ -50,17 +52,148 @@ public class Board
 		drawCells(gc, sbg, g);
 		cursor.render(gc, sbg, g);
 		drawUnitInfo(gc, g);
+		drawUnitChoice(gc, g);
 	}
 
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) 
 	{
 		cursor.update(gc, sbg, delta);
 		checkForInputs(gc);
-	} 
+	}
+	
+	private void drawUnitChoice(GameContainer gc, Graphics g) 
+	{
+		if(SceneBattle.PHASE == SceneBattle.UNIT_ACTION)
+		{
+			drawMoveButton(gc, g);
+			drawAttackButton(gc, g);
+			drawWaitButton(gc, g);
+		}
+	}
+
+	private void drawWaitButton(GameContainer gc, Graphics g) 
+	{
+		// Bouton Wait
+		float offX = (Cell.CELL_SIZE - buttonSize) / 2f;
+		
+		g.setColor(Color.black);
+		g.fillRect(offsetX + Cell.CELL_SIZE*currentCell.getXpos() + offX + sepDist + buttonSize, 
+					offsetY + Cell.CELL_SIZE*currentCell.getYpos() - buttonSize - sepDist, 
+					buttonSize, 
+					buttonSize);
+		
+		if(isHoveringWait(gc))
+			g.setColor(Color.gray);
+		else
+			g.setColor(Color.white);
+		
+		g.drawRect(offsetX + Cell.CELL_SIZE*currentCell.getXpos() + offX + sepDist + buttonSize, 
+					offsetY + Cell.CELL_SIZE*currentCell.getYpos() - buttonSize - sepDist, 
+					buttonSize, 
+					buttonSize);
+		g.drawString("W", offsetX + Cell.CELL_SIZE*currentCell.getXpos() + offX + sepDist + buttonSize, 
+					offsetY + Cell.CELL_SIZE*currentCell.getYpos() - buttonSize - sepDist); 
+	}
+
+	private boolean isHoveringWait(GameContainer gc) 
+	{
+		Input i = gc.getInput();
+		float mX = i.getMouseX();
+		float mY = i.getMouseY();
+		float offX = (Cell.CELL_SIZE - buttonSize) / 2f;
+		
+		if(mX > offsetX + Cell.CELL_SIZE*currentCell.getXpos() + offX + sepDist + buttonSize
+			&& mX < offsetX + Cell.CELL_SIZE*currentCell.getXpos() + offX + sepDist + buttonSize*2
+			&& mY > offsetY + Cell.CELL_SIZE*currentCell.getYpos() - buttonSize - sepDist
+			&& mY < offsetY + Cell.CELL_SIZE*currentCell.getYpos() - buttonSize - sepDist + buttonSize)
+			return true;
+		
+		return false;
+	}
+
+	private void drawAttackButton(GameContainer gc, Graphics g) {
+		// Bouton Attack
+		float offX = (Cell.CELL_SIZE - buttonSize) / 2f;
+		
+		g.setColor(Color.black);
+		g.fillRect(offsetX + Cell.CELL_SIZE*currentCell.getXpos() + offX, 
+					offsetY + Cell.CELL_SIZE*currentCell.getYpos() - buttonSize - sepDist, 
+					buttonSize, 
+					buttonSize);
+		
+		if(isHoveringAttack(gc))
+			g.setColor(Color.gray);
+		else
+			g.setColor(Color.white);
+		
+		g.drawRect(offsetX + Cell.CELL_SIZE*currentCell.getXpos() + offX, 
+					offsetY + Cell.CELL_SIZE*currentCell.getYpos() - buttonSize - sepDist, 
+					buttonSize, 
+					buttonSize);
+		g.drawString("A", offsetX + Cell.CELL_SIZE*currentCell.getXpos() + offX, 
+					offsetY + Cell.CELL_SIZE*currentCell.getYpos() - buttonSize - sepDist);
+		
+	}
+
+	private boolean isHoveringAttack(GameContainer gc) 
+	{
+		Input i = gc.getInput();
+		float mX = i.getMouseX();
+		float mY = i.getMouseY();
+		float offX = (Cell.CELL_SIZE - buttonSize) / 2f;
+		
+		if(mX > offsetX + Cell.CELL_SIZE*currentCell.getXpos() + offX
+			&& mX < offsetX + Cell.CELL_SIZE*currentCell.getXpos() + offX + buttonSize
+			&& mY > offsetY + Cell.CELL_SIZE*currentCell.getYpos() - buttonSize - sepDist
+			&& mY < offsetY + Cell.CELL_SIZE*currentCell.getYpos() - sepDist)
+			return true;
+		
+		return false;
+	}
+
+	private void drawMoveButton(GameContainer gc, Graphics g) 
+	{
+		// Bouton Move
+		float offX = (Cell.CELL_SIZE - buttonSize) / 2f;
+		
+		g.setColor(Color.black);
+		g.fillRect(offsetX + Cell.CELL_SIZE*currentCell.getXpos() + offX - sepDist - buttonSize, 
+					offsetY + Cell.CELL_SIZE*currentCell.getYpos() - buttonSize - sepDist, 
+					buttonSize, 
+					buttonSize);
+		
+		if(isHoveringMove(gc))
+			g.setColor(Color.gray);
+		else
+			g.setColor(Color.white);
+		
+		g.drawRect(offsetX + Cell.CELL_SIZE*currentCell.getXpos() + offX - sepDist - buttonSize, 
+					offsetY + Cell.CELL_SIZE*currentCell.getYpos() - buttonSize - sepDist, 
+					buttonSize, 
+					buttonSize);
+		g.drawString("M", offsetX + Cell.CELL_SIZE*currentCell.getXpos() + offX - sepDist - buttonSize, 
+					offsetY + Cell.CELL_SIZE*currentCell.getYpos() - buttonSize - sepDist);
+	}
+
+	private boolean isHoveringMove(GameContainer gc) 
+	{
+		Input i = gc.getInput();
+		float mX = i.getMouseX();
+		float mY = i.getMouseY();
+		float offX = (Cell.CELL_SIZE - buttonSize) / 2f;
+		
+		if(mX > offsetX + Cell.CELL_SIZE*currentCell.getXpos() + offX - sepDist - buttonSize
+			&& mX < offsetX + Cell.CELL_SIZE*currentCell.getXpos() + offX - sepDist
+			&& mY > offsetY + Cell.CELL_SIZE*currentCell.getYpos() - buttonSize - sepDist
+			&& mY < offsetY + Cell.CELL_SIZE*currentCell.getYpos() - sepDist)
+			return true;
+		
+		return false;
+	}
 
 	private void drawUnitInfo(GameContainer gc, Graphics g) 
 	{	
-		if(cursor.isOnBoard())
+		if(cursor.isOnBoard() && SceneBattle.PHASE != SceneBattle.UNIT_ACTION)
 		{
 			Cell cell = board[cursor.getCursorX()][cursor.getCursorY()];
 			if(cell.isOccupied())
@@ -102,10 +235,13 @@ public class Board
 					if(cell.isOccupied() && !cell.getUnit().isEnemy() && !cell.getUnit().isBuilding())
 					{
 						currentCell = board[cursor.getCursorX()][cursor.getCursorY()];
+						/*
 						clearMovePossibilities();
 						setMovePossibilities(0, currentCell.getXpos(), currentCell.getYpos());
 						
 						SceneBattle.PHASE = SceneBattle.MOVING;
+						*/
+						SceneBattle.PHASE = SceneBattle.UNIT_ACTION;
 					}
 				}
 				break;
@@ -116,6 +252,12 @@ public class Board
 					{
 						board[cursor.getCursorX()][cursor.getCursorY()].setUnit(currentCell.getUnit());
 						currentCell.removeUnit();
+						
+						
+						// PAS SUR 
+						currentCell = null;
+						
+						
 						
 						clearMovePossibilities();
 						SceneBattle.PHASE = SceneBattle.STANDBY;
@@ -149,6 +291,35 @@ public class Board
 				{
 					SceneBattle.PHASE = SceneBattle.STANDBY;
 					clearSummonPossibilities();
+				}
+				break;
+			case SceneBattle.UNIT_ACTION:
+				if(i.isMousePressed(Input.MOUSE_LEFT_BUTTON))
+				{
+					if(isHoveringMove(gc))
+					{
+						clearMovePossibilities();
+						setMovePossibilities(0, currentCell.getXpos(), currentCell.getYpos());
+						
+						SceneBattle.PHASE = SceneBattle.MOVING;
+					}
+					
+					if(isHoveringAttack(gc))
+					{
+						// Pas encore de phase d'attaque
+						SceneBattle.PHASE = SceneBattle.STANDBY;
+					}
+					
+					if(isHoveringWait(gc))
+					{
+						// Pas encore de système de Wait
+						SceneBattle.PHASE = SceneBattle.STANDBY;
+					}
+				}
+				
+				if(i.isMousePressed(Input.MOUSE_RIGHT_BUTTON))
+				{
+					SceneBattle.PHASE = SceneBattle.STANDBY;
 				}
 				break;
 		}

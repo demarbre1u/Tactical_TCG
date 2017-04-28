@@ -11,12 +11,12 @@ public class Main extends StateBasedGame
 	public static final String gamename = "TCG - Tactical !"; 
 	public static final int WIDTH = 1280, HEIGHT = 720;
 	
-	public static final int BATTLE = 0;
+	public static final int GAME = 0;
 	
 	public Main(String name) 
 	{
 		super(name);
-		addState(new Game(BATTLE));
+		addState(new Game(GAME));
 	}
 
 	public static void main(String[] args) 
@@ -41,8 +41,8 @@ public class Main extends StateBasedGame
 	@Override
 	public void initStatesList(GameContainer gc) throws SlickException 
 	{
-		getState(BATTLE).init(gc, this);
-		enterState(BATTLE);
+		getState(GAME).init(gc, this);
+		enterState(GAME);
 	}
 
 }
