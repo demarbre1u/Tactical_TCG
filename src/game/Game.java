@@ -1,21 +1,27 @@
 package game;
 
 
-import org.newdawn.slick.*;
-import org.newdawn.slick.state.*;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.state.BasicGameState;
+import org.newdawn.slick.state.StateBasedGame;
 
+import data.Database;
 import scene.SceneManager;
 
 public class Game extends BasicGameState
 {
 	
 	private SceneManager sceneManager;
+	private Database database;
 	
 	public Game(int state) { }
 	
 	@Override
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException 
 	{	 
+		database = new Database();
 		sceneManager = new SceneManager();
 	}
 

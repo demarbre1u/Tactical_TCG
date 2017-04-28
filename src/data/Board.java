@@ -38,12 +38,7 @@ public class Board
 		
 		cursor = new Cursor();
 		
-		board[5][5].setUnit(new Unit());
-		
-		board[4][5].setUnit(new Unit());
-		board[6][5].setUnit(new Unit());
-		board[5][4].setUnit(new Unit());
-		board[5][6].setUnit(new Unit());
+		board[5][5].setUnit(new Unit(1, 1, 4, "DansLeCode"));
 	}
 	
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) 

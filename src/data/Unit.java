@@ -3,12 +3,15 @@ package data;
 public class Unit 
 {
 	private int atk, def, mvt;
-
-	public Unit()
+	private String name;
+	
+	public Unit(int a, int d, int m, String n)
 	{
-		atk = 1;
-		def = 1;
-		mvt = 4;
+		atk = a;
+		def = d;
+		mvt = m;
+		
+		name = n;
 	}
 	
 	public int getAtk() {
@@ -33,5 +36,10 @@ public class Unit
 
 	public void setMvt(int mvt) {
 		this.mvt = mvt;
+	}
+	
+	public String getName()
+	{
+		return name;
 	}
 }
