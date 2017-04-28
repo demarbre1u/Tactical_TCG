@@ -9,8 +9,8 @@ import data.Hand;
 
 public class SceneBattle extends SceneBase
 {
-	private Board board;
-	private Hand hand;
+	public static Board board;
+	public static Hand hand;
 	
 	public static final int STANDBY = 0;
 	public static final int MOVING = 1;

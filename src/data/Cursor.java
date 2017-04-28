@@ -37,7 +37,7 @@ public class Cursor
 		if(cursorX < 0 || cursorX >= Board.WIDTH || cursorY < 0 || cursorY >= Board.HEIGHT)
 			return;
 		
-		g.setColor(Color.yellow);
+		g.setColor(Color.red);
 		g.drawOval(Board.offsetX + cursorX * Cell.CELL_SIZE, 
 					Board.offsetY + cursorY * Cell.CELL_SIZE, 
 					Cell.CELL_SIZE, 

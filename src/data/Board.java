@@ -44,8 +44,8 @@ public class Board
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) 
 	{
 		drawGrid(g);
-		cursor.render(gc, sbg, g);
 		drawCells(gc, sbg, g);
+		cursor.render(gc, sbg, g);
 	}
 	
 
@@ -92,6 +92,28 @@ public class Board
 					clearMovePossibilities();
 					currentCell = null;
 					SceneBattle.PHASE = SceneBattle.STANDBY;
+				}
+				break;
+			case SceneBattle.SUMMONING:
+				if(i.isMousePressed(Input.MOUSE_LEFT_BUTTON))
+				{
+					if(cursor.isOnBoard())
+					{
+						if(board[cursor.getCursorX()][cursor.getCursorY()].canSummon())
+						{
+							board[cursor.getCursorX()][cursor.getCursorY()].setUnit(SceneBattle.hand.clickedCard.getUnit());
+							
+							clearSummonPossibilities();
+							SceneBattle.hand.removeCard(SceneBattle.hand.clickedCard);
+							SceneBattle.PHASE = SceneBattle.STANDBY;
+						}
+					}
+				}
+				
+				if(i.isMouseButtonDown(Input.MOUSE_RIGHT_BUTTON))
+				{
+					SceneBattle.PHASE = SceneBattle.STANDBY;
+					clearSummonPossibilities();
 				}
 				break;
 		}
@@ -152,6 +174,26 @@ public class Board
 		}
 	}
 
+	public void setSummonPossibilities()
+	{
+		for(int i = 0 ; i < board[0].length ; i++)
+		{
+			if(! board[0][i].isOccupied())
+				board[0][i].setSummon(true);
+		}
+	}
+	
+	public void clearSummonPossibilities()
+	{
+		for(int i = 0 ; i < board.length ; i++)
+		{
+			for(int j = 0 ; j < board[0].length ; j++)
+			{
+				board[i][j].setSummon(false);
+			}
+		}
+	}
+	
 	private void drawCells(GameContainer gc, StateBasedGame sbg, Graphics g) 
 	{
 		for(int i = 0 ; i < board.length ; i++)
@@ -177,4 +219,9 @@ public class Board
 			}
 		}
 	}	
+
+	public Cursor getCursor()
+	{
+		return cursor;
+	}
 }

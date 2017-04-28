@@ -11,7 +11,7 @@ public class Cell
 	private int xpos, ypos;
 	
 	private Unit unit;
-	private boolean movable;
+	private boolean movable, summon;
 	
 	public Cell(int x, int y)
 	{
@@ -40,6 +40,15 @@ public class Cell
 					20, 
 					20);
 		}
+		
+		if(canSummon())
+		{
+			g.setColor(Color.orange);
+			g.fillRect(Board.offsetX + xpos * Cell.CELL_SIZE +2, 
+					Board.offsetY + ypos * Cell.CELL_SIZE +2, 
+					42, 
+					42);
+		}
 	}
 	
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) 
@@ -52,6 +61,11 @@ public class Cell
 		return movable;
 	}
 	
+	public boolean canSummon()
+	{
+		return summon;
+	}
+	
 	public int getXpos() {
 		return xpos;
 	}
@@ -60,6 +74,11 @@ public class Cell
 		return ypos;
 	}
 
+	public void setSummon(boolean s)
+	{
+		summon = s;  
+	}
+	
 	public void setMovable(boolean movable) {
 		this.movable = movable;
 	}
