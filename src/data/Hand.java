@@ -31,6 +31,10 @@ public class Hand
 		cards.add(Database.cards.get("soldier"));
 		cards.add(Database.cards.get("knight"));
 		cards.add(Database.cards.get("king"));
+		
+		cards.add(Database.cards.get("tower"));
+		cards.add(Database.cards.get("house"));
+		cards.add(Database.cards.get("castle"));
 	}
 	
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) 

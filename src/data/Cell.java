@@ -34,11 +34,21 @@ public class Cell
 		
 		if(isOccupied())
 		{
-			g.setColor(Color.blue);
-			g.fillRect(Board.offsetX + xpos * Cell.CELL_SIZE +14, 
-					Board.offsetY + ypos * Cell.CELL_SIZE +14, 
-					20, 
-					20);
+			if(! unit.isEnemy())
+				g.setColor(Color.blue);
+			else
+				g.setColor(Color.red);
+			
+			if(unit.isBuilding())
+				g.fillRect(Board.offsetX + xpos * Cell.CELL_SIZE +14, 
+						Board.offsetY + ypos * Cell.CELL_SIZE +14, 
+						20, 
+						20);
+			else
+				g.fillOval(Board.offsetX + xpos * Cell.CELL_SIZE +14, 
+						Board.offsetY + ypos * Cell.CELL_SIZE +14, 
+						20, 
+						20);
 		}
 		
 		if(canSummon())

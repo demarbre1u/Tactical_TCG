@@ -3,43 +3,67 @@ package data;
 public class Unit 
 {
 	private int atk, def, mvt;
+	
+	private boolean isBuilding, isEnemy;
+	
 	private String name;
 	
-	public Unit(int a, int d, int m, String n)
+	public Unit(int a, int d, int m, String n, boolean b)
 	{
 		atk = a;
 		def = d;
 		mvt = m;
-		
 		name = n;
+		isBuilding = b;
 	}
 	
-	public int getAtk() {
+	public int getAtk() 
+	{
 		return atk;
 	}
 
-	public void setAtk(int atk) {
+	public void setAtk(int atk) 
+	{
 		this.atk = atk;
 	}
 
-	public int getDef() {
+	public int getDef() 
+	{
 		return def;
 	}
 
-	public void setDef(int def) {
+	public void setDef(int def) 
+	{
 		this.def = def;
 	}
 
-	public int getMvt() {
+	public int getMvt() 
+	{
 		return mvt;
 	}
 
-	public void setMvt(int mvt) {
+	public void setMvt(int mvt) 
+	{
 		this.mvt = mvt;
 	}
 	
 	public String getName()
 	{
 		return name;
+	}
+	
+	public boolean isBuilding() 
+	{
+		return isBuilding;
+	}
+
+	public boolean isEnemy() 
+	{
+		return isEnemy;
+	}
+
+	public void setEnemy(boolean e)
+	{
+		isEnemy = e;
 	}
 }

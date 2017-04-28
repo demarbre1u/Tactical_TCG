@@ -38,7 +38,10 @@ public class Board
 		
 		cursor = new Cursor();
 		
-		board[5][5].setUnit(new Unit(1, 1, 4, "DansLeCode"));
+		board[5][5].setUnit(new Unit(1, 1, 4, "DansLeCode", false));
+		
+		board[8][8].setUnit(new Unit(1, 1, 4, "DansLeCode", false));
+		board[8][8].getUnit().setEnemy(true);
 	}
 	
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) 
@@ -64,7 +67,8 @@ public class Board
 			case SceneBattle.STANDBY:
 				if(i.isMousePressed(Input.MOUSE_LEFT_BUTTON) && cursor.isOnBoard())
 				{
-					if(board[cursor.getCursorX()][cursor.getCursorY()].isOccupied())
+					Cell cell = board[cursor.getCursorX()][cursor.getCursorY()];
+					if(cell.isOccupied() && !cell.getUnit().isEnemy() && !cell.getUnit().isBuilding())
 					{
 						currentCell = board[cursor.getCursorX()][cursor.getCursorY()];
 						clearMovePossibilities();
@@ -176,11 +180,36 @@ public class Board
 
 	public void setSummonPossibilities()
 	{
-		for(int i = 0 ; i < board[0].length ; i++)
+		if(SceneBattle.hand.clickedCard.getUnit().isBuilding())
 		{
-			if(! board[0][i].isOccupied())
-				board[0][i].setSummon(true);
-		}
+			for(int i = 0 ; i < board[0].length ; i++)
+			{
+				if(! board[0][i].isOccupied())
+					board[0][i].setSummon(true);
+			}
+		}	
+		else
+		{
+			for(int i = 0 ; i < board[0].length ; i++)
+			{
+				if(board[0][i].getUnit() == null)
+					continue;
+				
+				if(board[0][i].getUnit().isBuilding())
+				{
+					if(i + 1 < HEIGHT)
+						if(! board[0][i + 1].isOccupied())
+							board[0][i + 1].setSummon(true);
+					
+					if(i - 1 >= 0)
+						if(! board[0][i - 1].isOccupied())
+							board[0][i - 1].setSummon(true);
+					
+					if(! board[1][i].isOccupied())
+						board[1][i].setSummon(true);
+				}
+			}
+		}	
 	}
 	
 	public void clearSummonPossibilities()
