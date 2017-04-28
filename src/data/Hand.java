@@ -9,6 +9,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.state.StateBasedGame;
 
+import main.Main;
 import scene.SceneBattle;
 
 public class Hand 
@@ -78,12 +79,12 @@ public class Hand
 			g.setColor(Color.white);
 		
 		g.drawRect(offsetX + sepDist * i + Card.WIDTH * i + offsetButton + sepDist + buttonSize, 
-				gc.getHeight() - 130, 
+				Main.HEIGHT - 130, 
 				buttonSize, 
 				buttonSize);
 		g.drawString("I",
 				offsetX + sepDist * i + Card.WIDTH * i + offsetButton + sepDist + buttonSize, 
-				gc.getHeight() - 130);
+				Main.HEIGHT - 130);
 	}
 
 	private boolean isHoveringInfo(GameContainer gc, int i) 
@@ -94,8 +95,8 @@ public class Hand
 		
 		if(mX > offsetX + sepDist*i + Card.WIDTH*i + offsetButton + sepDist + buttonSize
 			&& mX < offsetX + sepDist*i + Card.WIDTH*i + offsetButton + sepDist + buttonSize*2
-			&& mY > gc.getHeight() - 130
-			&& mY < gc.getHeight() - 130 + buttonSize)
+			&& mY > Main.HEIGHT - 130
+			&& mY < Main.HEIGHT - 130 + buttonSize)
 			return true;
 		
 		return false;
@@ -109,12 +110,12 @@ public class Hand
 			g.setColor(Color.white);
 		
 		g.drawRect(offsetX + sepDist * i + Card.WIDTH * i + offsetButton, 
-				gc.getHeight() - 130, 
+				Main.HEIGHT - 130, 
 				buttonSize, 
 				buttonSize);
 		g.drawString("P", 
 				offsetX + sepDist * i + Card.WIDTH * i + offsetButton, 
-				gc.getHeight() - 130);
+				Main.HEIGHT - 130);
 	}
 
 	private boolean isHoveringPlay(GameContainer gc, int i) 
@@ -125,8 +126,8 @@ public class Hand
 		
 		if(mX > offsetX + sepDist*i + Card.WIDTH*i + offsetButton
 			&& mX < offsetX + sepDist*i + Card.WIDTH*i + offsetButton + buttonSize
-			&& mY > gc.getHeight() - 130
-			&& mY < gc.getHeight() - 130 + buttonSize)
+			&& mY > Main.HEIGHT - 130
+			&& mY < Main.HEIGHT - 130 + buttonSize)
 			return true;
 		
 		return false;
@@ -135,13 +136,13 @@ public class Hand
 	private void drawCard(GameContainer gc, Graphics g, int i) 
 	{
 		g.drawRect(offsetX + sepDist * i + Card.WIDTH * i, 
-				gc.getHeight() - 75, 
+				Main.HEIGHT - 75, 
 				Card.WIDTH, 
 				Card.HEIGHT);
 	
 		g.drawString(cards.get(i).getUnit().getName(), 
 				offsetX + sepDist * i + Card.WIDTH * i + 10, 
-				gc.getHeight() - 60);			
+				Main.HEIGHT - 60);			
 	}
 
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) 
@@ -196,7 +197,7 @@ public class Hand
 		float mY = input.getMouseY();
 		
 		if(mX > offsetX + sepDist * i + Card.WIDTH * i && mX < offsetX + sepDist * i + Card.WIDTH * i + Card.WIDTH
-				&& mY > gc.getHeight() - 75 && mY < gc.getHeight())
+				&& mY > Main.HEIGHT - 75 && mY < Main.HEIGHT)
 			return true;
 		
 		return false;

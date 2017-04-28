@@ -8,6 +8,7 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 import data.Database;
+import main.Main;
 import scene.SceneManager;
 
 public class Game extends BasicGameState
@@ -29,6 +30,8 @@ public class Game extends BasicGameState
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException 
 	{
 		sceneManager.render(gc, sbg, g);
+		
+		g.drawString("FPS : " + gc.getFPS(), 10, 10);
 	}
 
 	@Override

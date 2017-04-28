@@ -24,9 +24,10 @@ public class Main extends StateBasedGame
 		AppGameContainer appgc;
 		try
 		{
-			appgc = new AppGameContainer(new Main(gamename));
-			appgc.setDisplayMode(WIDTH, HEIGHT, false);
+			appgc = new AppGameContainer(new ScalableGame(new Main(gamename),WIDTH,HEIGHT));
+			appgc.setDisplayMode(WIDTH, HEIGHT, false); 
 			appgc.setTargetFrameRate(60);
+			appgc.setShowFPS(false);
 			appgc.setVSync(true);
 			appgc.setMouseGrabbed(false);
 			appgc.start();

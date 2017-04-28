@@ -49,8 +49,8 @@ public class Board
 		drawGrid(g);
 		drawCells(gc, sbg, g);
 		cursor.render(gc, sbg, g);
+		drawUnitInfo(gc, g);
 	}
-	
 
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) 
 	{
@@ -58,6 +58,37 @@ public class Board
 		checkForInputs(gc);
 	} 
 
+	private void drawUnitInfo(GameContainer gc, Graphics g) 
+	{	
+		if(cursor.isOnBoard())
+		{
+			Cell cell = board[cursor.getCursorX()][cursor.getCursorY()];
+			if(cell.isOccupied())
+			{
+				float offset = 0;
+				if(cell.getUnit().isEnemy())
+				{
+					g.setColor(Color.red);
+					offset = Main.WIDTH - offsetX;;
+				}
+				else
+				{
+					g.setColor(Color.blue);
+				}
+				
+				g.drawString(cell.getUnit().getName(), 10 + offset, 300);
+				if(cell.getUnit().isBuilding())
+					g.drawString("HP : " + cell.getUnit().getDef(), 10 + offset, 325);
+				else
+				{
+					g.drawString("Atk : " + cell.getUnit().getAtk(), 10 + offset, 325);
+					g.drawString("Def : " + cell.getUnit().getDef(), 10 + offset, 350);
+					g.drawString("Mvt : " + cell.getUnit().getMvt(), 10 + offset, 375);
+				}
+			}
+		}
+	}
+	
 	private void checkForInputs(GameContainer gc) 
 	{
 		Input i = gc.getInput();
