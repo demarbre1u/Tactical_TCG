@@ -14,6 +14,8 @@ public class SceneBattle extends SceneBase
 	
 	public static final int STANDBY = 0;
 	public static final int MOVING = 1;
+	public static final int PLAY_OR_INFO = 2;
+	public static final int SUMMONING = 3;
 	
 	public static int PHASE = STANDBY;
 	
