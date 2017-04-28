@@ -15,7 +15,7 @@ public class Hand
 {
 	public final static int MAX = 6;
 	
-	private final static float offsetX = 100, sepDist = 20, buttonSize = 48;
+	private final static float offsetX = 75, sepDist = 20, buttonSize = 48;
 	private static float offsetButton;
 	
 	public Card clickedCard;
@@ -28,13 +28,13 @@ public class Hand
 		
 		cards = new ArrayList<Card>();
 		
-		cards.add(Database.cards.get("soldier"));
-		cards.add(Database.cards.get("knight"));
-		cards.add(Database.cards.get("king"));
+		cards.add(new Card(Database.units.get("soldier")));
+		cards.add(new Card(Database.units.get("knight")));
+		cards.add(new Card(Database.units.get("king")));
 		
-		cards.add(Database.cards.get("tower"));
-		cards.add(Database.cards.get("house"));
-		cards.add(Database.cards.get("castle"));
+		cards.add(new Card(Database.units.get("tower")));
+		cards.add(new Card(Database.units.get("tower")));
+		cards.add(new Card(Database.units.get("castle")));
 	}
 	
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) 
