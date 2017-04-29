@@ -42,7 +42,10 @@ public class AStar
 			{
 				// Fin du l'algo !
 				// Il faut construire le path qu'on va renvoyer maintenant
+				path.add(end);
+				
 				Cell temp = current;
+				
 				while(temp.getPrevious() != null)
 				{
 					path.add(temp.getPrevious());
