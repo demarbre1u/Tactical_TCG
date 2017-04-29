@@ -7,6 +7,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.state.StateBasedGame;
 
 import main.Main;
+import pathfinding.AStar;
 import scene.SceneBattle;
 
 public class Board 
@@ -16,6 +17,8 @@ public class Board
 	public static int WIDTH, HEIGHT;
 	
 	private float sepDist = 20, buttonSize = 32;
+	
+	private int targetX, targetY;
 	
 	public Cell currentCell;
 	
@@ -58,7 +61,7 @@ public class Board
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) 
 	{
 		cursor.update(gc, sbg, delta);
-		checkForInputs(gc);
+		checkForInputs(gc, sbg, delta);
 	}
 	
 	private void drawUnitChoice(GameContainer gc, Graphics g) 
@@ -222,7 +225,7 @@ public class Board
 		}
 	}
 	
-	private void checkForInputs(GameContainer gc) 
+	private void checkForInputs(GameContainer gc, StateBasedGame sbg, int delta) 
 	{
 		Input i = gc.getInput();
 		
@@ -250,15 +253,26 @@ public class Board
 				{
 					if(board[cursor.getCursorX()][cursor.getCursorY()].canMove())
 					{
-						board[cursor.getCursorX()][cursor.getCursorY()].setUnit(currentCell.getUnit());
+						// Déplacement améliorés
+						
+						
+						//System.out.println("Size depuis board : " + path.length);
+						//currentCell.getUnit().setMoving(true);
+						
+						targetX = cursor.getCursorX();
+						targetY = cursor.getCursorY();
+						
+						// findPath() retourne le chemin sous forme de ArrayList<Cell>() !
+						AStar path = new AStar();
+						path.findPath(currentCell, board[targetX][targetY]);
+						path.dumpPath();
+						
+						board[targetX][targetY].setUnit(currentCell.getUnit());
+						
 						currentCell.removeUnit();
-						
-						
-						// PAS SUR 
 						currentCell = null;
 						
-						
-						
+						resetBoardForPathFinding();
 						clearMovePossibilities();
 						SceneBattle.PHASE = SceneBattle.STANDBY;
 					}
@@ -324,7 +338,18 @@ public class Board
 				break;
 		}
 	}
-	
+
+	private void resetBoardForPathFinding() 
+	{
+		for(int i = 0 ; i < board.length ; i++)
+		{
+			for(int j = 0 ; j < board[i].length ; j++)
+			{
+				board[i][j].initCellForPathFinding();
+			}
+		}
+	}
+
 	private void clearMovePossibilities() 
 	{
 		for(int i = 0 ; i < WIDTH ; i++)
@@ -451,6 +476,11 @@ public class Board
 		}
 	}	
 
+	public Cell getCell(int x, int y)
+	{
+		return board[x][y];
+	}
+	
 	public Cursor getCursor()
 	{
 		return cursor;

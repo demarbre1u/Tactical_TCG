@@ -7,7 +7,15 @@ import org.newdawn.slick.state.StateBasedGame;
 
 public class Cell 
 {	
-	public static int CELL_SIZE = 48;
+	// Pour le A* Pathfinding
+	private int f = 0, g = 0, h = 0;
+	private Cell previous = null;
+	
+	// Autre
+	public final static int CELL_SIZE = 48;
+	public final static int SPEED = 8;
+	
+	
 	private int xpos, ypos;
 	
 	private Unit unit;
@@ -22,7 +30,7 @@ public class Cell
 	}
 	
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) 
-	{
+	{	
 		if(canMove())
 		{
 			g.setColor(Color.green);
@@ -63,8 +71,17 @@ public class Cell
 	
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) 
 	{
-
-	} 
+		
+	}
+	
+	public void initCellForPathFinding()
+	{
+		f = 0;
+		g = 0;
+		h = 0;
+		
+		previous = null;
+	}
 	
 	public boolean canMove()
 	{
@@ -111,5 +128,37 @@ public class Cell
 	public Unit getUnit()
 	{
 		return unit;
+	}
+
+	public int getF() {
+		return f;
+	}
+
+	public void setF(int f) {
+		this.f = f;
+	}
+
+	public int getG() {
+		return g;
+	}
+
+	public void setG(int g) {
+		this.g = g;
+	}
+
+	public int getH() {
+		return h;
+	}
+
+	public void setH(int h) {
+		this.h = h;
+	}
+	
+	public Cell getPrevious() {
+		return previous;
+	}
+
+	public void setPrevious(Cell previous) {
+		this.previous = previous;
 	}
 }
