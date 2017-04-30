@@ -2,19 +2,43 @@ package data;
 
 public class Unit 
 {
-	private int atk, def, mvt;
+	private int atk, def, mvt, damageTaken;
 	
 	private boolean isBuilding, isEnemy, isMoving;
 	
-	private String name;
+	private String name, attackType;
 	
-	public Unit(int a, int d, int m, String n, boolean b)
+	public Unit(int a, int d, int m, String n, boolean b, String type)
 	{
 		atk = a;
 		def = d;
 		mvt = m;
 		name = n;
+		attackType = type;
 		isBuilding = b;
+		
+		damageTaken = 0;
+	}
+	
+	public void inflictDamage(int dmg)
+	{
+		damageTaken += dmg;
+		
+		if(damageTaken < 0)
+			damageTaken = 0;
+		
+		if(damageTaken > def)
+			damageTaken = def;
+	}
+	
+	public int getDamageTaken()
+	{
+		return damageTaken;
+	}
+	
+	public boolean isDead()
+	{
+		return def == damageTaken;
 	}
 	
 	public int getAtk() 
@@ -67,11 +91,18 @@ public class Unit
 		isEnemy = e;
 	}
 
-	public boolean isMoving() {
+	public boolean isMoving() 
+	{
 		return isMoving;
 	}
 
-	public void setMoving(boolean isMoving) {
+	public void setMoving(boolean isMoving) 
+	{
 		this.isMoving = isMoving;
+	}
+
+	public String getAttackType()
+	{
+		return attackType;
 	}
 }

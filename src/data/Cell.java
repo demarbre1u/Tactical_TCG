@@ -12,38 +12,56 @@ public class Cell
 	// Pour le A* Pathfinding
 	private int f = 0, g = 0, h = 0;
 	private Cell previous = null;
-	
+
 	// Autre
 	public final static int CELL_SIZE = 48;
 	public final static int SPEED = 6;
-	
-	
+
+
 	private int xpos, ypos;
 	private float relativeX, relativeY;
-	
+
 	private Unit unit;
-	private boolean movable, summon;
-	
+	private boolean movable, summon, attackable;
+
 	public Cell(int x, int y)
 	{
 		xpos = x;
 		ypos = y;
-		
+
 		relativeX = 0;
 		relativeY = 0;
-		
+
 		unit = null;
 	}
-	
+
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) 
 	{	
 		if(canMove())
 		{
 			g.setColor(Color.green);
 			g.fillRect(Board.offsetX + xpos * Cell.CELL_SIZE +2, 
-						Board.offsetY + ypos * Cell.CELL_SIZE +2, 
-						42, 
-						42);
+					Board.offsetY + ypos * Cell.CELL_SIZE +2, 
+					42, 
+					42);
+		}
+
+		if(canSummon())
+		{
+			g.setColor(Color.orange);
+			g.fillRect(Board.offsetX + xpos * Cell.CELL_SIZE +2, 
+					Board.offsetY + ypos * Cell.CELL_SIZE +2, 
+					42, 
+					42);
+		}
+
+		if(isAttackable())
+		{
+			g.setColor(Color.red);
+			g.fillRect(Board.offsetX + xpos * Cell.CELL_SIZE +2, 
+					Board.offsetY + ypos * Cell.CELL_SIZE +2, 
+					42, 
+					42);
 		}
 		
 		// Si il y a une unité 
@@ -52,8 +70,8 @@ public class Cell
 			if(! unit.isEnemy())
 				g.setColor(Color.blue);
 			else
-				g.setColor(Color.red);
-			
+				g.setColor(Color.gray);
+
 			if(unit.isBuilding())
 				g.fillRect(Board.offsetX + xpos * Cell.CELL_SIZE +14, 
 						Board.offsetY + ypos * Cell.CELL_SIZE +14, 
@@ -65,34 +83,25 @@ public class Cell
 						20, 
 						20);
 		}
-		
-		if(canSummon())
-		{
-			g.setColor(Color.orange);
-			g.fillRect(Board.offsetX + xpos * Cell.CELL_SIZE +2, 
-					Board.offsetY + ypos * Cell.CELL_SIZE +2, 
-					42, 
-					42);
-		}
 	}
-	
+
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) 
 	{
 		if(unit == null) 
 			return;
-			
+
 		if(unit.isMoving())
 		{
 			Board b = SceneBattle.board;
-			
+
 			if(! b.path.isEmpty())
 			{
 				int targetX = b.path.get( b.path.size() - 1 ).getXpos();
 				int targetY = b.path.get( b.path.size() - 1 ).getYpos();
-				
+
 				int xDiff = xpos - targetX;
 				int yDiff = ypos - targetY;
-				
+
 				if(xDiff == 0)
 				{
 					if(yDiff > 0)
@@ -158,31 +167,33 @@ public class Cell
 			}
 		}
 	}
-	
+
 	public void initCellForPathFinding()
 	{
 		f = 0;
 		g = 0;
 		h = 0;
-		
+
 		previous = null;
 	}
-	
+
 	public boolean canMove()
 	{
 		return movable;
 	}
-	
+
 	public boolean canSummon()
 	{
 		return summon;
 	}
-	
-	public int getXpos() {
+
+	public int getXpos() 
+	{
 		return xpos;
 	}
 
-	public int getYpos() {
+	public int getYpos() 
+	{
 		return ypos;
 	}
 
@@ -190,8 +201,9 @@ public class Cell
 	{
 		summon = s;  
 	}
-	
-	public void setMovable(boolean movable) {
+
+	public void setMovable(boolean movable) 
+	{
 		this.movable = movable;
 	}
 
@@ -199,17 +211,17 @@ public class Cell
 	{
 		return unit == null ? false : true; 
 	}
-	
+
 	public void setUnit(Unit u)
 	{
 		unit = u;
 	}
-	
+
 	public void removeUnit()
 	{
 		unit = null;
 	}
-	
+
 	public Unit getUnit()
 	{
 		return unit;
@@ -219,31 +231,48 @@ public class Cell
 		return f;
 	}
 
-	public void setF(int f) {
+	public void setF(int f) 
+	{
 		this.f = f;
 	}
 
-	public int getG() {
+	public int getG() 
+	{
 		return g;
 	}
 
-	public void setG(int g) {
+	public void setG(int g) 
+	{
 		this.g = g;
 	}
 
-	public int getH() {
+	public int getH() 
+	{
 		return h;
 	}
 
-	public void setH(int h) {
+	public void setH(int h) 
+	{
 		this.h = h;
 	}
-	
-	public Cell getPrevious() {
+
+	public Cell getPrevious() 
+	{
 		return previous;
 	}
 
-	public void setPrevious(Cell previous) {
+	public void setPrevious(Cell previous) 
+	{
 		this.previous = previous;
+	}
+
+	public boolean isAttackable() 
+	{
+		return attackable;
+	}
+
+	public void setAttackable(boolean attackable) 
+	{
+		this.attackable = attackable;
 	}
 }

@@ -47,10 +47,17 @@ public class Board
 		
 		cursor = new Cursor();
 		
-		board[5][5].setUnit(new Unit(1, 1, 4, "DansLeCode", false));
+		board[5][5].setUnit(new Unit(1, 1, 4, "DansLeCode", false, "melee"));
 		
-		board[8][8].setUnit(new Unit(1, 1, 4, "DansLeCode", false));
+		board[8][8].setUnit(new Unit(2, 2, 4, "DansLeCode", false, "melee"));
+		board[7][8].setUnit(new Unit(2, 2, 4, "DansLeCode", false, "range"));
+		board[9][8].setUnit(new Unit(2, 2, 4, "DansLeCode", false, "spear"));
+		board[6][8].setUnit(new Unit(2, 2, 4, "DansLeCode", false, "melee"));
+		
+		board[6][8].getUnit().setEnemy(true);
+		board[7][8].getUnit().setEnemy(true);
 		board[8][8].getUnit().setEnemy(true);
+		board[9][8].getUnit().setEnemy(true);
 	}
 	
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) 
@@ -230,12 +237,13 @@ public class Board
 				
 				g.drawString(cell.getUnit().getName(), 10 + offset, 300);
 				if(cell.getUnit().isBuilding())
-					g.drawString("HP : " + cell.getUnit().getDef(), 10 + offset, 325);
+					g.drawString("HP : " + cell.getUnit().getDef() + " - " + cell.getUnit().getDamageTaken(), 10 + offset, 325);
 				else
 				{
 					g.drawString("Atk : " + cell.getUnit().getAtk(), 10 + offset, 325);
-					g.drawString("Def : " + cell.getUnit().getDef(), 10 + offset, 350);
+					g.drawString("HP : " + cell.getUnit().getDef() + " - " + cell.getUnit().getDamageTaken(), 10 + offset, 350);
 					g.drawString("Mvt : " + cell.getUnit().getMvt(), 10 + offset, 375);
+					g.drawString("Weapon type : " + cell.getUnit().getAttackType(), 10 + offset, 400);
 				}
 			}
 		}
@@ -327,7 +335,8 @@ public class Board
 					if(isHoveringAttack(gc))
 					{
 						// Pas encore de phase d'attaque
-						SceneBattle.PHASE = SceneBattle.STANDBY;
+						setAttackPossibilities();
+						SceneBattle.PHASE = SceneBattle.ATTACKING;
 					}
 					
 					if(isHoveringWait(gc))
@@ -342,7 +351,162 @@ public class Board
 					SceneBattle.PHASE = SceneBattle.STANDBY;
 				}
 				break;
+			case SceneBattle.ATTACKING:
+				if(i.isMousePressed(Input.MOUSE_LEFT_BUTTON))
+				{
+					if(! cursor.isOnBoard())
+						return;
+					
+					Cell target = board[cursor.getCursorX()][cursor.getCursorY()];
+					
+					if(target.isAttackable() && target.getUnit() != null && target.getUnit().isEnemy())
+					{
+						doAttack(currentCell, target);
+						clearAttackPossibilities();
+						SceneBattle.PHASE = SceneBattle.STANDBY;
+					}
+				}
+				
+				if(i.isMousePressed(Input.MOUSE_RIGHT_BUTTON))
+				{
+					clearAttackPossibilities();
+					SceneBattle.PHASE = SceneBattle.STANDBY;
+				}
+				break;
 		}
+	}
+
+	private void doAttack(Cell attacker, Cell target) 
+	{
+		target.getUnit().inflictDamage( attacker.getUnit().getAtk() );
+		
+		if(target.getUnit().isDead())
+		{
+			target.removeUnit();
+			return;
+		}
+
+		if(canCounterAttack(attacker, target))
+			attacker.getUnit().inflictDamage( target.getUnit().getAtk() );
+
+		if(attacker.getUnit().isDead())
+			attacker.removeUnit();
+	}
+	
+	public boolean canCounterAttack(Cell attacker, Cell target)
+	{
+		boolean canCounter = false;
+		switch(attacker.getUnit().getAttackType())
+		{
+			case "melee":
+				if(target.getUnit().getAttackType().equals("spear") || target.getUnit().getAttackType().equals("melee"))
+					canCounter = true;
+				break;
+			case "spear":
+				if(target.getUnit().getAttackType().equals("spear"))
+					canCounter = true;
+				
+				int dist = Math.abs( attacker.getXpos() - target.getXpos() ) + Math.abs( attacker.getYpos() - target.getYpos() );
+				if(target.getUnit().getAttackType().equals("melee") && dist == 1)
+					canCounter = true;
+				
+				break;
+			case "range":
+				if(target.getUnit().getAttackType().equals("range"))
+					canCounter = true;
+				
+				int diffX = Math.abs( target.getXpos() - attacker.getXpos() );
+				int diffY = Math.abs( target.getYpos() - attacker.getYpos() );
+				if(target.getUnit().getAttackType().equals("spear") && diffX == 1 && diffY == 1)
+					canCounter = true;
+				
+				break;
+		}
+		
+		return canCounter;
+	}
+
+	private void clearAttackPossibilities()
+	{
+		for(int i = 0 ; i < WIDTH ; i++)
+		{
+			for(int j = 00 ; j < HEIGHT ; j++)
+			{
+				board[i][j].setAttackable(false);
+			}
+		}
+	}
+	
+	private void setAttackPossibilities() 
+	{
+		switch(currentCell.getUnit().getAttackType())
+		{
+			case "spear":
+				setAttackPossibilitiesForSpear();
+				setAttackPossibilitiesForMelee();
+				break;
+			case "melee":
+				setAttackPossibilitiesForMelee();
+				break;
+			case "range":
+				setAttackPossibilitiesForSpear();
+				setAttackPossibilitiesForRange();
+				break;
+		}
+	}
+	
+	private void setAttackPossibilitiesForSpear()
+	{
+		int baseX = currentCell.getXpos();
+		int baseY = currentCell.getYpos();
+		
+		if(baseX + 1 < WIDTH && baseY + 1 < HEIGHT)
+			board[baseX + 1][baseY + 1].setAttackable(true);
+		
+		if(baseX - 1 >= 0 && baseY + 1 < HEIGHT)
+			board[baseX - 1][baseY + 1].setAttackable(true);
+		
+		if(baseX - 1 >= 0 && baseY - 1 >= 0)
+			board[baseX - 1][baseY - 1].setAttackable(true);
+		
+		if(baseX + 1 < WIDTH && baseY - 1 >= 0)
+			board[baseX + 1][baseY - 1].setAttackable(true);
+	}
+	
+	private void setAttackPossibilitiesForMelee()
+	{
+		int baseX = currentCell.getXpos();
+		int baseY = currentCell.getYpos();
+		
+		if(baseX + 1 < WIDTH)
+			board[baseX + 1][baseY].setAttackable(true);
+		
+		if(baseX - 1 >= 0)
+			board[baseX - 1][baseY].setAttackable(true);
+		
+		if(baseY + 1 < HEIGHT)
+			board[baseX][baseY + 1].setAttackable(true);
+		
+		if(baseY - 1 >= 0)
+			board[baseX][baseY - 1].setAttackable(true);
+	}
+	
+	private void setAttackPossibilitiesForRange()
+	{
+		int baseX = currentCell.getXpos();
+		int baseY = currentCell.getYpos();
+		
+		if(baseX + 2 < WIDTH)
+			board[baseX + 2][baseY].setAttackable(true);
+		
+		if(baseX - 2 >= 0)
+			board[baseX - 2][baseY].setAttackable(true);
+		
+		if(baseY + 2 < HEIGHT)
+			board[baseX][baseY + 2].setAttackable(true);
+		
+		if(baseY - 2 >= 0)
+			board[baseX][baseY - 2].setAttackable(true);
 	}
 
 	public void resetBoardForPathFinding() 
