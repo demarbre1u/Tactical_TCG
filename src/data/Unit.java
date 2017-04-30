@@ -4,8 +4,8 @@ public class Unit
 {
 	private int atk, def, mvt;
 	
-	private boolean isBuilding, isEnemy, isMoving, finishedMoving;
-
+	private boolean isBuilding, isEnemy, isMoving;
+	
 	private String name;
 	
 	public Unit(int a, int d, int m, String n, boolean b)
@@ -73,16 +73,5 @@ public class Unit
 
 	public void setMoving(boolean isMoving) {
 		this.isMoving = isMoving;
-	}
-
-
-	public boolean finishedMoving() 
-	{
-		return finishedMoving;
-	}
-
-
-	public void setFinishedMoving(boolean finishedMoving) {
-		this.finishedMoving = finishedMoving;
 	}
 }

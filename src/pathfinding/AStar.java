@@ -52,6 +52,9 @@ public class AStar
 					temp = temp.getPrevious();
 				}
 				
+				// On retire ma case de départ dont on a pas besoin
+				path.remove( path.size() - 1 );
+				
 				return path;
 			}
 			

@@ -1,5 +1,7 @@
 package data;
 
+import java.util.List;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -23,6 +25,8 @@ public class Board
 	public Cell currentCell;
 	
 	private Cursor cursor;
+	
+	public List<Cell> path;
 
 	public Board(int w, int h)
 	{
@@ -62,8 +66,20 @@ public class Board
 	{
 		cursor.update(gc, sbg, delta);
 		checkForInputs(gc, sbg, delta);
+		updateCells(gc, sbg, delta);
 	}
 	
+	private void updateCells(GameContainer gc, StateBasedGame sbg, int delta) 
+	{
+		for(int i = 0 ; i < WIDTH ; i++)
+		{
+			for(int j = 0; j < HEIGHT ; j++)
+			{
+				board[i][j].update(gc, sbg, delta);
+			}
+		}
+	}
+
 	private void drawUnitChoice(GameContainer gc, Graphics g) 
 	{
 		if(SceneBattle.PHASE == SceneBattle.UNIT_ACTION)
@@ -238,12 +254,6 @@ public class Board
 					if(cell.isOccupied() && !cell.getUnit().isEnemy() && !cell.getUnit().isBuilding())
 					{
 						currentCell = board[cursor.getCursorX()][cursor.getCursorY()];
-						/*
-						clearMovePossibilities();
-						setMovePossibilities(0, currentCell.getXpos(), currentCell.getYpos());
-						
-						SceneBattle.PHASE = SceneBattle.MOVING;
-						*/
 						SceneBattle.PHASE = SceneBattle.UNIT_ACTION;
 					}
 				}
@@ -254,27 +264,23 @@ public class Board
 					if(board[cursor.getCursorX()][cursor.getCursorY()].canMove())
 					{
 						// Déplacement améliorés
-						
-						
-						//System.out.println("Size depuis board : " + path.length);
-						//currentCell.getUnit().setMoving(true);
-						
 						targetX = cursor.getCursorX();
 						targetY = cursor.getCursorY();
 						
-						// findPath() retourne le chemin sous forme de ArrayList<Cell>() !
-						AStar path = new AStar();
-						path.findPath(currentCell, board[targetX][targetY]);
-						path.dumpPath();
-						
-						board[targetX][targetY].setUnit(currentCell.getUnit());
-						
-						currentCell.removeUnit();
-						currentCell = null;
-						
-						resetBoardForPathFinding();
+						AStar astar = new AStar();
+						path = astar.findPath(currentCell, board[targetX][targetY]);
+						// astar.dumpPath();
 						clearMovePossibilities();
+						currentCell.getUnit().setMoving(true);
+						//board[targetX][targetY].setUnit(currentCell.getUnit());
+						//currentCell.removeUnit();
+						
+						/*
+						currentCell = null;
+						resetBoardForPathFinding();
 						SceneBattle.PHASE = SceneBattle.STANDBY;
+						*/
+						SceneBattle.PHASE = SceneBattle.ANIMATING;
 					}
 				}
 				
@@ -339,7 +345,7 @@ public class Board
 		}
 	}
 
-	private void resetBoardForPathFinding() 
+	public void resetBoardForPathFinding() 
 	{
 		for(int i = 0 ; i < board.length ; i++)
 		{

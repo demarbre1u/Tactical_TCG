@@ -5,6 +5,8 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.state.StateBasedGame;
 
+import scene.SceneBattle;
+
 public class Cell 
 {	
 	// Pour le A* Pathfinding
@@ -13,10 +15,11 @@ public class Cell
 	
 	// Autre
 	public final static int CELL_SIZE = 48;
-	public final static int SPEED = 8;
+	public final static int SPEED = 6;
 	
 	
 	private int xpos, ypos;
+	private float relativeX, relativeY;
 	
 	private Unit unit;
 	private boolean movable, summon;
@@ -25,6 +28,9 @@ public class Cell
 	{
 		xpos = x;
 		ypos = y;
+		
+		relativeX = 0;
+		relativeY = 0;
 		
 		unit = null;
 	}
@@ -40,6 +46,7 @@ public class Cell
 						42);
 		}
 		
+		// Si il y a une unité 
 		if(isOccupied())
 		{
 			if(! unit.isEnemy())
@@ -53,8 +60,8 @@ public class Cell
 						20, 
 						20);
 			else
-				g.fillOval(Board.offsetX + xpos * Cell.CELL_SIZE +14, 
-						Board.offsetY + ypos * Cell.CELL_SIZE +14, 
+				g.fillOval(Board.offsetX + xpos * Cell.CELL_SIZE +14 + relativeX,  // PAS SUR
+						Board.offsetY + ypos * Cell.CELL_SIZE +14 + relativeY, // PAS SUR  
 						20, 
 						20);
 		}
@@ -71,7 +78,85 @@ public class Cell
 	
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) 
 	{
-		
+		if(unit == null) 
+			return;
+			
+		if(unit.isMoving())
+		{
+			Board b = SceneBattle.board;
+			
+			if(! b.path.isEmpty())
+			{
+				int targetX = b.path.get( b.path.size() - 1 ).getXpos();
+				int targetY = b.path.get( b.path.size() - 1 ).getYpos();
+				
+				int xDiff = xpos - targetX;
+				int yDiff = ypos - targetY;
+				
+				if(xDiff == 0)
+				{
+					if(yDiff > 0)
+					{
+						relativeY -= SPEED;
+						if(relativeY <= -Cell.CELL_SIZE)
+						{
+							relativeY = -Cell.CELL_SIZE;
+							b.getCell(targetX, targetY).setUnit( unit );
+							unit = null;
+							relativeY = 0;
+							b.path.remove( b.path.size() - 1 );
+						}
+					}
+					else
+					{
+						relativeY += SPEED;
+						if(relativeY >= Cell.CELL_SIZE)
+						{
+							relativeY = Cell.CELL_SIZE;
+							b.getCell(targetX, targetY).setUnit( unit );
+							unit = null;
+							relativeY = 0;
+							b.path.remove( b.path.size() - 1 );
+						}
+					}
+				}
+				else
+				{
+					if(xDiff > 0)
+					{
+						relativeX -= SPEED;
+						if(relativeX <= -Cell.CELL_SIZE)
+						{
+							relativeX = -Cell.CELL_SIZE;
+							b.getCell(targetX, targetY).setUnit( unit );
+							unit = null;
+							relativeX = 0;
+							b.path.remove( b.path.size() - 1 );
+						}
+					}
+					else
+					{
+						relativeX += SPEED;
+						if(relativeX >= Cell.CELL_SIZE)
+						{
+							relativeX = Cell.CELL_SIZE;
+							b.getCell(targetX, targetY).setUnit( unit );
+							unit = null;
+							relativeX = 0;
+							b.path.remove( b.path.size() - 1 );
+						}
+					}
+				}
+			}
+			else
+			{
+				b.path = null;
+				b.currentCell = null;
+				b.resetBoardForPathFinding();
+				unit.setMoving(false);
+				SceneBattle.PHASE = SceneBattle.STANDBY;
+			}
+		}
 	}
 	
 	public void initCellForPathFinding()
