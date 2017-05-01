@@ -376,7 +376,7 @@ public class Board
 		}
 	}
 
-	private void doAttack(Cell attacker, Cell target) 
+	public void doAttack(Cell attacker, Cell target) 
 	{
 		target.getUnit().inflictDamage( attacker.getUnit().getAtk() );
 		
