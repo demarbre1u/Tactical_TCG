@@ -9,8 +9,10 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.state.StateBasedGame;
 
+import game.Game;
 import main.Main;
 import scene.SceneBattle;
+import scene.SceneCardInfo;
 
 public class Hand 
 {
@@ -177,10 +179,15 @@ public class Hand
 							SceneBattle.board.setSummonPossibilities();
 							break;
 						}
+						
+						if(isHoveringInfo(gc, i))
+						{
+							Game.sceneManager.pushToTop(new SceneCardInfo(cards.get(i)));
+						}
 					}
 				}
 				
-				if(input.isMouseButtonDown(Input.MOUSE_RIGHT_BUTTON))
+				if(input.isMousePressed(Input.MOUSE_RIGHT_BUTTON))
 				{
 					clickedCard = null;
 					SceneBattle.PHASE = SceneBattle.STANDBY;

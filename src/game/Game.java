@@ -13,8 +13,8 @@ import scene.SceneManager;
 public class Game extends BasicGameState
 {
 	
-	private SceneManager sceneManager;
-	private Database database;
+	public static SceneManager sceneManager;
+	public static Database database;
 	
 	public Game(int state) { }
 	
