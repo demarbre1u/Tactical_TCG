@@ -44,7 +44,7 @@ public class SceneBattle extends SceneBase
 	}
 
 	@Override
-	public void update(GameContainer gc, StateBasedGame sbg, int delta) 
+	public void update(GameContainer gc, StateBasedGame sbg, int delta)
 	{
 		board.update(gc, sbg, delta);
 		hand.update(gc, sbg, delta);

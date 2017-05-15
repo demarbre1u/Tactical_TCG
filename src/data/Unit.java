@@ -6,6 +6,8 @@ public class Unit
 	
 	private boolean isBuilding, isEnemy, isMoving;
 	
+	public boolean hasAlreadyMoved = false, hasAlreadyAttacked = false;
+	
 	private String name, attackType;
 	
 	public Unit(int a, int d, int m, String n, boolean b, String type)

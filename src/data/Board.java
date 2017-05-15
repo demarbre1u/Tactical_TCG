@@ -8,6 +8,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.state.StateBasedGame;
 
+import game.Game;
 import main.Main;
 import pathfinding.AStar;
 import scene.SceneBattle;
@@ -27,6 +28,8 @@ public class Board
 	private Cursor cursor;
 	
 	public List<Cell> path;
+	
+	public static boolean isPlayerTurn = true;
 
 	public Board(int w, int h)
 	{
@@ -58,24 +61,125 @@ public class Board
 		board[7][8].getUnit().setEnemy(true);
 		board[8][8].getUnit().setEnemy(true);
 		board[9][8].getUnit().setEnemy(true);
+		
+		// On place les bases de chaque camps
+		board[0][HEIGHT / 2].setUnit(new Unit(0, 30, 0, "Base", true, "none"));
+		board[WIDTH - 1][HEIGHT / 2].setUnit(new Unit(0, 30, 0, "Base", true, "none"));
+		board[WIDTH - 1][HEIGHT / 2].getUnit().setEnemy(true);
 	}
 	
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) 
 	{
 		drawGrid(g);
 		drawCells(gc, sbg, g);
-		cursor.render(gc, sbg, g);
-		drawUnitInfo(gc, g);
-		drawUnitChoice(gc, g);
+		
+		if(isPlayerTurn)
+		{
+			cursor.render(gc, sbg, g);
+			drawUnitInfo(gc, g);
+			drawUnitChoice(gc, g);
+			drawEndTurnButton(gc, g);
+		}
+
+		g.setColor(Color.white);
+		g.drawString("Player Turn : " + isPlayerTurn, 600, 75);
 	}
 
-	public void update(GameContainer gc, StateBasedGame sbg, int delta) 
+	public void update(GameContainer gc, StateBasedGame sbg, int delta)
 	{
-		cursor.update(gc, sbg, delta);
-		checkForInputs(gc, sbg, delta);
+		checkWinOrLose();
+		checkIfEnemyTurnEnded();
+		
+		if(isPlayerTurn)
+		{
+			cursor.update(gc, sbg, delta);
+			checkForInputs(gc, sbg, delta);
+		}
+		else
+		{
+			isPlayerTurn = true;
+			readyAllyUnit();
+		}
+		
 		updateCells(gc, sbg, delta);
 	}
 	
+	private void checkIfEnemyTurnEnded() 
+	{
+		if(!isPlayerTurn)
+		{
+			// On regarde si l'ennemi peut encore jouer 
+			boolean found = false;
+			
+			for(int i = 0 ; i < WIDTH ; i++)
+			{
+				for(int j = 0 ; j < HEIGHT ; j++)
+				{
+					// Si il y a une unité, qu'elle est ennemie et qu'elle n'a pas encore attaqué ou bougé, et qu'elle n'est pas un batiment
+					if(board[i][j].getUnit() != null && board[i][j].getUnit().isEnemy() && (!board[i][j].getUnit().hasAlreadyAttacked || !board[i][j].getUnit().hasAlreadyMoved) && !board[i][j].getUnit().isBuilding())
+					{
+						found = true;
+						break;
+					}
+				}
+				
+				if(found)
+					break;
+			}
+			
+			if(!found)
+			{
+				isPlayerTurn = true;
+				readyAllyUnit();
+			}
+		}
+	}
+
+	private void readyAllyUnit() 
+	{
+		for(int i = 0 ; i < WIDTH ; i++)
+		{
+			for(int j = 0 ; j < HEIGHT ; j++)
+			{
+				if(board[i][j].getUnit() != null && !board[i][j].getUnit().isEnemy() && !board[i][j].getUnit().isBuilding())
+				{
+					board[i][j].getUnit().hasAlreadyAttacked = false;
+					board[i][j].getUnit().hasAlreadyMoved = false;
+				}
+			}
+		}
+	}
+	
+	private void readyEnemyUnit() 
+	{
+		for(int i = 0 ; i < WIDTH ; i++)
+		{
+			for(int j = 0 ; j < HEIGHT ; j++)
+			{
+				if(board[i][j].getUnit() != null && board[i][j].getUnit().isEnemy() && !board[i][j].getUnit().isBuilding())
+				{
+					board[i][j].getUnit().hasAlreadyAttacked = false;
+					board[i][j].getUnit().hasAlreadyMoved = false;
+				}
+			}
+		}
+	}
+
+	private void checkWinOrLose() 
+	{
+		if(board[0][HEIGHT / 2].getUnit() == null)
+		{
+			// Perdu
+			Game.sceneManager.pushToTop("gameOver");
+		}
+		
+		if(board[WIDTH - 1][HEIGHT / 2].getUnit() == null)
+		{
+			// Gagné
+			Game.sceneManager.pushToTop("victory");
+		}
+	}
+
 	private void updateCells(GameContainer gc, StateBasedGame sbg, int delta) 
 	{
 		for(int i = 0 ; i < WIDTH ; i++)
@@ -111,7 +215,7 @@ public class Board
 		if(isHoveringWait(gc))
 			g.setColor(Color.gray);
 		else
-			g.setColor(Color.white);
+			g.setColor(Color.blue);
 		
 		g.drawRect(offsetX + Cell.CELL_SIZE*currentCell.getXpos() + offX + sepDist + buttonSize, 
 					offsetY + Cell.CELL_SIZE*currentCell.getYpos() - buttonSize - sepDist, 
@@ -147,10 +251,12 @@ public class Board
 					buttonSize, 
 					buttonSize);
 		
-		if(isHoveringAttack(gc))
+		if(currentCell.getUnit().hasAlreadyAttacked)
+			g.setColor(new Color(0, 0, 100));
+		else if(isHoveringAttack(gc))
 			g.setColor(Color.gray);
 		else
-			g.setColor(Color.white);
+			g.setColor(Color.blue);
 		
 		g.drawRect(offsetX + Cell.CELL_SIZE*currentCell.getXpos() + offX, 
 					offsetY + Cell.CELL_SIZE*currentCell.getYpos() - buttonSize - sepDist, 
@@ -188,10 +294,12 @@ public class Board
 					buttonSize, 
 					buttonSize);
 		
-		if(isHoveringMove(gc))
+		if(currentCell.getUnit().hasAlreadyMoved)
+			g.setColor(new Color(0, 0, 100));
+		else if(isHoveringMove(gc))
 			g.setColor(Color.gray);
 		else
-			g.setColor(Color.white);
+			g.setColor(Color.blue);
 		
 		g.drawRect(offsetX + Cell.CELL_SIZE*currentCell.getXpos() + offX - sepDist - buttonSize, 
 					offsetY + Cell.CELL_SIZE*currentCell.getYpos() - buttonSize - sepDist, 
@@ -249,6 +357,37 @@ public class Board
 		}
 	}
 	
+	private void drawEndTurnButton(GameContainer gc, Graphics g)
+	{
+		if(isHoveringEndTurn(gc))
+			g.setColor(Color.gray);
+		else
+			g.setColor(Color.white);
+		
+		float posX = Main.WIDTH - 175;
+		float posY = Main.HEIGHT - 150;
+		
+		g.drawRect(posX, posY, 150, 50);
+		g.drawString("End Turn", posX + 37, posY + 15);
+	}
+	
+	private boolean isHoveringEndTurn(GameContainer gc)
+	{
+		Input input = gc.getInput();
+		float mX = input.getMouseX();
+		float mY = input.getMouseY();
+		float posX = Main.WIDTH - 175;
+		float posY = Main.HEIGHT - 150;
+		
+		if(mX >= posX && 
+			mX <= posX + 150 &&
+			mY >= posY &&
+			mY <= posY + 50)
+			return true;
+		else
+			return false;
+	}
+	
 	private void checkForInputs(GameContainer gc, StateBasedGame sbg, int delta) 
 	{
 		Input i = gc.getInput();
@@ -256,13 +395,24 @@ public class Board
 		switch(SceneBattle.PHASE)
 		{
 			case SceneBattle.STANDBY:
-				if(i.isMousePressed(Input.MOUSE_LEFT_BUTTON) && cursor.isOnBoard())
+				if(i.isMousePressed(Input.MOUSE_LEFT_BUTTON))
 				{
-					Cell cell = board[cursor.getCursorX()][cursor.getCursorY()];
-					if(cell.isOccupied() && !cell.getUnit().isEnemy() && !cell.getUnit().isBuilding())
+					// Si on clique sur le plateau
+					if(cursor.isOnBoard())
 					{
-						currentCell = board[cursor.getCursorX()][cursor.getCursorY()];
-						SceneBattle.PHASE = SceneBattle.UNIT_ACTION;
+						Cell cell = board[cursor.getCursorX()][cursor.getCursorY()];
+						if(cell.isOccupied() && !cell.getUnit().isEnemy() && !cell.getUnit().isBuilding() && (!cell.getUnit().hasAlreadyAttacked || !cell.getUnit().hasAlreadyMoved))
+						{
+							currentCell = board[cursor.getCursorX()][cursor.getCursorY()];
+							SceneBattle.PHASE = SceneBattle.UNIT_ACTION;
+						}
+					}
+					
+					// Si on clique sur le bouton de fin de tour
+					if(isHoveringEndTurn(gc))
+					{
+						readyEnemyUnit();
+						isPlayerTurn = false;
 					}
 				}
 				break;
@@ -277,17 +427,10 @@ public class Board
 						
 						AStar astar = new AStar();
 						path = astar.findPath(currentCell, board[targetX][targetY]);
-						// astar.dumpPath();
 						clearMovePossibilities();
 						currentCell.getUnit().setMoving(true);
-						//board[targetX][targetY].setUnit(currentCell.getUnit());
-						//currentCell.removeUnit();
+						currentCell.getUnit().hasAlreadyMoved = true;
 						
-						/*
-						currentCell = null;
-						resetBoardForPathFinding();
-						SceneBattle.PHASE = SceneBattle.STANDBY;
-						*/
 						SceneBattle.PHASE = SceneBattle.ANIMATING;
 					}
 				}
@@ -324,7 +467,7 @@ public class Board
 			case SceneBattle.UNIT_ACTION:
 				if(i.isMousePressed(Input.MOUSE_LEFT_BUTTON))
 				{
-					if(isHoveringMove(gc))
+					if(isHoveringMove(gc) && !currentCell.getUnit().hasAlreadyMoved)
 					{
 						clearMovePossibilities();
 						setMovePossibilities(0, currentCell.getXpos(), currentCell.getYpos());
@@ -332,16 +475,17 @@ public class Board
 						SceneBattle.PHASE = SceneBattle.MOVING;
 					}
 					
-					if(isHoveringAttack(gc))
+					if(isHoveringAttack(gc) && !currentCell.getUnit().hasAlreadyAttacked)
 					{
-						// Pas encore de phase d'attaque
 						setAttackPossibilities();
 						SceneBattle.PHASE = SceneBattle.ATTACKING;
 					}
 					
 					if(isHoveringWait(gc))
 					{
-						// Pas encore de système de Wait
+						currentCell.getUnit().hasAlreadyAttacked = true;
+						currentCell.getUnit().hasAlreadyMoved = true;
+						
 						SceneBattle.PHASE = SceneBattle.STANDBY;
 					}
 				}
@@ -361,8 +505,10 @@ public class Board
 					
 					if(target.isAttackable() && target.getUnit() != null && target.getUnit().isEnemy())
 					{
+						currentCell.getUnit().hasAlreadyAttacked = true;
 						doAttack(currentCell, target);
 						clearAttackPossibilities();
+						
 						SceneBattle.PHASE = SceneBattle.STANDBY;
 					}
 				}

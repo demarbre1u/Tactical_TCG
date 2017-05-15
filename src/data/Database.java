@@ -20,9 +20,9 @@ public class Database
 		units.put("knight", new Unit(2, 2, 3, "Knight", false, "spear"));
 		units.put("king", new Unit(3, 3, 1, "King", false, "range"));
 	
-		// Les unités bâtiments
+		// Les unités bâtiments		
 		units.put("tower", new Unit(0, 10, 0, "Tower", true, "none"));
 		units.put("house", new Unit(0, 5, 0, "House", true, "none"));
-		units.put("castle", new Unit(0, 20, 0, "Castle", true, "none"));
+		units.put("castle", new Unit(0, 20, 0, "Shop", true, "none"));
 	}
 }

@@ -68,9 +68,19 @@ public class Cell
 		if(isOccupied())
 		{
 			if(! unit.isEnemy())
-				g.setColor(Color.blue);
+			{
+				if(unit.hasAlreadyAttacked && unit.hasAlreadyMoved)
+					g.setColor(new Color(0, 0, 150));
+				else
+					g.setColor(Color.blue);
+			}
 			else
-				g.setColor(Color.gray);
+			{
+				if(unit.hasAlreadyAttacked && unit.hasAlreadyMoved)
+					g.setColor(new Color(100, 100 ,100));
+				else
+					g.setColor(Color.gray);
+			}
 
 			if(unit.isBuilding())
 				g.fillRect(Board.offsetX + xpos * Cell.CELL_SIZE +14, 
@@ -78,8 +88,8 @@ public class Cell
 						20, 
 						20);
 			else
-				g.fillOval(Board.offsetX + xpos * Cell.CELL_SIZE +14 + relativeX,  // PAS SUR
-						Board.offsetY + ypos * Cell.CELL_SIZE +14 + relativeY, // PAS SUR  
+				g.fillOval(Board.offsetX + xpos * Cell.CELL_SIZE +14 + relativeX,  
+						Board.offsetY + ypos * Cell.CELL_SIZE +14 + relativeY, 
 						20, 
 						20);
 		}

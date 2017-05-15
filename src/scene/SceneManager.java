@@ -21,6 +21,8 @@ public class SceneManager
 		// On crée toutes les Scenes du jeu
 		scenes = new HashMap<String, SceneBase>();
 		scenes.put("battle", new SceneBattle());
+		scenes.put("gameOver", new SceneGameOver());
+		scenes.put("victory", new SceneVictory());
 		
 		currentScene = scenes.get("battle");
 	}
@@ -44,6 +46,12 @@ public class SceneManager
 	{
 		backgroundScene = currentScene;
 		currentScene = scene;
+	}
+	
+	public void pushToTop(String scene)
+	{
+		backgroundScene = currentScene;
+		currentScene = scenes.get(scene);
 	}
 	
 	public void resumeBackgroundScene()
