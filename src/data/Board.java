@@ -99,6 +99,13 @@ public class Board
 		{
 			isPlayerTurn = true;
 			readyAllyUnit();
+			
+			if(!SceneBattle.hand.deck.isEmpty() && SceneBattle.hand.cards.size() < Hand.MAX)
+			{
+				System.out.println("on rentre bien dans la condition");
+				
+				SceneBattle.hand.cards.add(SceneBattle.hand.deck.drawCardFromDeck());
+			}
 		}
 		
 		updateCells(gc, sbg, delta);

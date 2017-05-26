@@ -24,24 +24,26 @@ public class Hand
 	public Card clickedCard;
 	
 	public List<Card> cards;
+	public Deck deck;
 	
 	public Hand()
 	{
 		offsetButton = ( Card.WIDTH - (buttonSize*2 + sepDist) ) / 2f;
 		
 		cards = new ArrayList<Card>();
+	
+		deck = new Deck("res/decks/base_deck.txt");
 		
-		cards.add(new Card(Database.units.get("soldier")));
-		cards.add(new Card(Database.units.get("knight")));
-		cards.add(new Card(Database.units.get("king")));
-		
-		cards.add(new Card(Database.units.get("tower")));
-		cards.add(new Card(Database.units.get("tower")));
-		cards.add(new Card(Database.units.get("castle")));
+		for(int i = 0 ; i < MAX ; i++)
+		{
+			cards.add(deck.drawCardFromDeck());
+		}
 	}
 	
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) 
 	{
+		deck.render(gc, sbg, g);
+		
 		g.setColor(Color.white);
 		for(int i = 0 ; i < cards.size() ; i++)
 		{
@@ -149,6 +151,8 @@ public class Hand
 
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) 
 	{
+		deck.update(gc, sbg, delta);
+		
 		Input input = gc.getInput();
 		
 		switch(SceneBattle.PHASE)

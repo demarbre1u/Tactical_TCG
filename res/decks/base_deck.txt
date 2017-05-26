@@ -1,0 +1,8 @@
+king
+tower
+house
+knight
+soldier
+castle
+mage
+archer
