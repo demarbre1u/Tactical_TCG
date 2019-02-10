@@ -1,7 +1,5 @@
-### What is this repository for? ###
+# Tactical TCG
 
-This repo. is about a small TCG - Tactical game project.
+This project was intended to be a game mixing mechanics from both Tactical RPG and TCG games.
 
-### How do I get set up? ###
-
-// TODO
+The game library this project uses is [Slick2D](http://slick.ninjacave.com/).
